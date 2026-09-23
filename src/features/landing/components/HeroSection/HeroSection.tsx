@@ -1,4 +1,3 @@
-import { ArrowRightIcon } from "../../../../shared";
 import { NAV_ITEMS, TICKER_ITEMS } from "../../data/landingData";
 import { Navbar } from "../Navbar";
 import { TickerMarquee } from "../TickerMarquee";
@@ -24,17 +23,6 @@ export function HeroSection() {
             A disciplined investment strategy balancing long-term growth, risk
             management, and financial stability.
           </p>
-
-          {/* Dual Button Action Row */}
-          <div className="hero-cta-row">
-            <button type="button" className="hero-cta-primary" id="cta-start-free">
-              <span>Start Free Now</span>
-              <ArrowRightIcon size={14} className="hero-btn-arrow" />
-            </button>
-            <button type="button" className="hero-cta-secondary" id="cta-explore">
-              <span>See In Action</span>
-            </button>
-          </div>
         </div>
       </div>
 

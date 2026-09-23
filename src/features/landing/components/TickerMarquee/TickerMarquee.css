@@ -12,25 +12,22 @@
 }
 
 @supports (animation-timeline: scroll()) {
-  @keyframes tickerScrollFadeOut {
+  @keyframes tickerScrollFlyUp {
     0% {
       opacity: 1;
-      transform: translateY(0);
-      visibility: visible;
-      pointer-events: auto;
+      transform: translateY(0) scale(1);
     }
     100% {
       opacity: 0;
-      transform: translateY(24px);
-      visibility: hidden;
+      transform: translateY(-48px) scale(0.97);
       pointer-events: none;
     }
   }
 
   .ticker-scroll-wrapper {
-    animation: tickerScrollFadeOut linear both;
+    animation: tickerScrollFlyUp linear both;
     animation-timeline: scroll(root block);
-    animation-range: 0px 90px;
+    animation-range: 0px 420px;
   }
 }
 
@@ -84,21 +81,24 @@
 .ticker-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: 6px;
+  gap: 0.65rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
   flex-shrink: 0;
-  cursor: default;
-  transition: opacity 0.25s ease, background 0.25s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ticker-container:hover .ticker-item:hover {
   opacity: 1;
-  background: var(--border-subtle);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
 
 .ticker-container:hover .ticker-item:not(:hover) {
-  opacity: 0.45;
+  opacity: 0.4;
 }
 
 .ticker-symbol {
