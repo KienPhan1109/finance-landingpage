@@ -75,6 +75,7 @@ export function useChartWebGL() {
     const uMouseHover = gl.getUniformLocation(program, "u_mouse_hover");
     const uMouseVel = gl.getUniformLocation(program, "u_mouse_vel");
     const uIntro = gl.getUniformLocation(program, "u_intro");
+    const uScroll = gl.getUniformLocation(program, "u_scroll");
 
     let width = 0;
     let height = 0;
@@ -101,6 +102,7 @@ export function useChartWebGL() {
     let currentActive = 0.0;
     let targetVel = 0.0;
     let currentVel = 0.0;
+    let currentScroll = 0.0;
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -154,12 +156,18 @@ export function useChartWebGL() {
       currentVel += (targetVel - currentVel) * velDamp;
       targetVel *= Math.exp(-4.5 * dt);
 
+      // 1:1 Synchronous lockstep with smooth momentum scroll (zero phase shearing)
+      const scrollY = window.scrollY;
+      const heroScrollRange = Math.max(window.innerHeight * 0.95, 500);
+      currentScroll = Math.min(1.0, Math.max(0.0, scrollY / heroScrollRange));
+
       gl.uniform2f(uResolution, width, height);
       gl.uniform1f(uTime, elapsed);
       gl.uniform2f(uMouse, currentMouse.x, currentMouse.y);
       gl.uniform1f(uMouseHover, currentActive);
       gl.uniform1f(uMouseVel, currentVel);
       gl.uniform1f(uIntro, introProgress);
+      gl.uniform1f(uScroll, currentScroll);
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       rafRef.current = requestAnimationFrame(render);

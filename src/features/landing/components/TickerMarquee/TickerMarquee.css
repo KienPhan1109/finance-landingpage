@@ -2,15 +2,44 @@
    Ticker Marquee — Vanilla CSS Standard
    ══════════════════════════════════════════════════════════ */
 
-.ticker-container {
+.ticker-scroll-wrapper {
   position: absolute;
   bottom: 0.5rem;
   left: 0;
   right: 0;
   z-index: 10;
+  will-change: transform, opacity;
+}
+
+@supports (animation-timeline: scroll()) {
+  @keyframes tickerScrollFadeOut {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
+      pointer-events: auto;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(24px);
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  .ticker-scroll-wrapper {
+    animation: tickerScrollFadeOut linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0px 90px;
+  }
+}
+
+.ticker-container {
+  position: relative;
+  width: 100%;
   overflow: hidden;
   padding: 0.7rem 0;
-  background: var(--bg-obsidian);
+  background: transparent;
   backdrop-filter: blur(var(--blur-glass)) saturate(160%);
   -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(160%);
 

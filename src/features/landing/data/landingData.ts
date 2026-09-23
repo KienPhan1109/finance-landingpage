@@ -1,4 +1,4 @@
-import type { DualChartData, GlassCardData, NavItem, TickerItem } from "../types";
+import type { DualChartData, GlassCardData, NavItem, PipelineStage, TickerItem } from "../types";
 
 export const NAV_ITEMS: ReadonlyArray<NavItem> = [
   { label: "Strategies", href: "#strategies", isActive: true },
@@ -119,4 +119,62 @@ export const TICKER_ITEMS: ReadonlyArray<TickerItem> = [
   { id: "ma", symbol: "MA", companyName: "Mastercard Inc.", price: 478.90, changePercent: -0.89, direction: "down" },
   { id: "hd", symbol: "HD", companyName: "Home Depot", price: 389.12, changePercent: 1.67, direction: "up" },
   { id: "crm", symbol: "CRM", companyName: "Salesforce Inc.", price: 312.78, changePercent: 2.34, direction: "up" },
+];
+
+export const PIPELINE_STAGES: ReadonlyArray<PipelineStage> = [
+  {
+    id: "financial-profile",
+    stageNumber: "01",
+    title: "Financial Profile Collection",
+    shortTitle: "PROFILE",
+    description: "Aggregate and digitize client financial data from multiple sources into a unified wealth profile.",
+    input: "Surveys, bank statements, tax data",
+    engine: "Automated data extraction & normalization",
+    output: "Net worth breakdown, cashflow map",
+    icon: "📋",
+  },
+  {
+    id: "risk-appetite",
+    stageNumber: "02",
+    title: "Risk Appetite Assessment",
+    shortTitle: "RISK",
+    description: "Quantify investor risk tolerance through behavioral finance models and psychometric scoring.",
+    input: "15-question behavioral assessment",
+    engine: "Euler utility function scoring",
+    output: "Risk score 7.8/10, max drawdown tolerance",
+    icon: "⚖️",
+  },
+  {
+    id: "equity-analysis",
+    stageNumber: "03",
+    title: "Sample Equity Analysis",
+    shortTitle: "EQUITY",
+    description: "Screen and rank equities using multi-factor quantitative models across the investable universe.",
+    input: "Stock universe (500+ tickers)",
+    engine: "Quant factor model (Beta, P/E, Sharpe)",
+    output: "Ranked equity shortlist with scores",
+    icon: "📊",
+  },
+  {
+    id: "markowitz-optimization",
+    stageNumber: "04",
+    title: "Markowitz Portfolio Optimization",
+    shortTitle: "MARKOWITZ",
+    description: "Construct mean-variance efficient portfolios along the capital allocation line using Modern Portfolio Theory.",
+    input: "Shortlisted assets, covariance matrix",
+    engine: "Mean-Variance Optimization (MPT)",
+    output: "Efficient frontier, tangency portfolio weights",
+    icon: "📈",
+  },
+  {
+    id: "ips-report",
+    stageNumber: "05",
+    title: "IPS Report Generation",
+    shortTitle: "IPS",
+    description: "Auto-generate institutional-grade Investment Policy Statements with compliance-ready formatting.",
+    input: "Optimized allocation + risk profile",
+    engine: "Template engine with compliance rules",
+    output: "Investment Policy Statement (PDF)",
+    icon: "📄",
+  },
 ];

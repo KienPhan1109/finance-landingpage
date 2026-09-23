@@ -77,6 +77,9 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  scroll-behavior: auto !important;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
 body {
@@ -86,29 +89,20 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   line-height: 1.5;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
 #root {
   min-height: 100vh;
 }
 
-/* ── Scrollbar ───────────────────────────────────────────── */
+/* ── Hidden Scrollbar (Bỏ hoàn toàn giao diện thanh kéo) ──── */
 
 ::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(var(--color-accent-purple-rgb), 0.15);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(var(--color-accent-purple-rgb), 0.30);
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* ── Selection ───────────────────────────────────────────── */

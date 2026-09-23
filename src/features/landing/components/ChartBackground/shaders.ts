@@ -15,21 +15,23 @@ uniform vec2 u_mouse;
 uniform float u_mouse_hover;
 uniform float u_mouse_vel;
 uniform float u_intro;
+uniform float u_scroll;
 
-// ── Analytical 3D Crest Functions (Elevated 3D Wave Proportions) ──
+// ── Analytical 3D Crest Functions with Scroll-Driven Elevation (Rise Upward) ──
 
-// Block 1: Foreground Silk Dune — heightened presence with grand sweeping peaks
-float getCrest1(float x, float t, vec2 mouse, float hover) {
+// Block 1: Foreground Silk Dune — rises majestically upward on scroll
+float getCrest1(float x, float t, vec2 mouse, float hover, float scroll) {
   float px = (mouse.x - 0.5) * 0.020 * hover;
   float py = (mouse.y - 0.5) * 0.012 * hover;
   float sx = x - px;
 
-  // Crest left: tall dramatic swell reaching ~0.67
-  float crestL = exp(-pow((sx - 0.11) / 0.18, 2.0)) * 0.34;
-  // Crest right: rising majestically to ~0.61
-  float crestR = exp(-pow((sx - 0.88) / 0.20, 2.0)) * 0.28;
-  // Base elevation: 0.33 (elevated for taller silhouette)
-  float base = 0.33 + py;
+  // As scroll increases, peaks rise upward into the upper viewport
+  float scrollRise = scroll * 0.44;
+  float crestL = exp(-pow((sx - 0.11) / 0.20, 2.0)) * 0.34;
+  float crestR = exp(-pow((sx - 0.88) / 0.22, 2.0)) * 0.28;
+
+  // Base elevation rises upward: starts at 0.33, elevates to ~0.77+
+  float base = 0.33 + py + scrollRise;
 
   // Gentle oceanic breathing motion
   float wave = sin(sx * 3.4 + t * 0.38) * 0.016 + cos(sx * 2.0 - t * 0.26) * 0.012;
@@ -37,27 +39,29 @@ float getCrest1(float x, float t, vec2 mouse, float hover) {
   return base + crestL + crestR + wave;
 }
 
-// Block 2: Midground Cyan/Teal Ribbon (Tall complementary layer)
-float getCrest2(float x, float t, vec2 mouse, float hover) {
+// Block 2: Midground Cyan/Teal Ribbon (Rises upward in complementary parallax)
+float getCrest2(float x, float t, vec2 mouse, float hover, float scroll) {
   float px = (mouse.x - 0.5) * 0.010 * hover;
   float py = (mouse.y - 0.5) * 0.006 * hover;
   float sx = x - px;
 
+  float scrollRise = scroll * 0.48;
   float crestL = exp(-pow((sx - 0.26) / 0.22, 2.0)) * 0.27;
-  float crestR = exp(-pow((sx - 0.94) / 0.16, 2.0)) * 0.31;
-  float base = 0.40 + py;
+  float crestR = exp(-pow((sx - 0.94) / 0.18, 2.0)) * 0.31;
+  float base = 0.40 + py + scrollRise;
   float wave = sin(sx * 2.8 - t * 0.32) * 0.014;
 
   return base + crestL + crestR + wave;
 }
 
-// Block 3: Deep Ambient Horizon (Atmospheric backdrop ridge reaching ~0.67)
-float getCrest3(float x, float t, vec2 mouse, float hover) {
+// Block 3: Deep Ambient Horizon (Atmospheric backdrop ridge rising on scroll)
+float getCrest3(float x, float t, vec2 mouse, float hover, float scroll) {
   float px = (mouse.x - 0.5) * 0.004 * hover;
   float sx = x - px;
 
+  float scrollRise = scroll * 0.50;
   float crest = exp(-pow((sx - 0.52) / 0.35, 2.0)) * 0.20;
-  float base = 0.47;
+  float base = 0.47 + scrollRise;
   float wave = cos(sx * 2.2 + t * 0.22) * 0.014;
 
   return base + crest + wave;
@@ -117,15 +121,15 @@ void main() {
   float sweepBeam = exp(-pow((uv.x - sweepPos) / 0.14, 2.0)) * max(0.0, 1.0 - u_intro) * 1.6;
   vec3 sweepCol = mix(vec3(0.64, 1.0, 0.30), vec3(0.15, 0.85, 1.0), uv.x) * sweepBeam * 1.4;
 
-  // Dynamic Crest Heights with Cinematic Rise
-  float h3 = getCrest3(uv.x, t, m, hvr) * u_intro;
-  float h2 = getCrest2(uv.x, t, m, hvr) * u_intro;
-  float h1 = getCrest1(uv.x, t, m, hvr) * u_intro;
+  // Dynamic Crest Heights with Cinematic Rise and Scroll Reduction
+  float h3 = getCrest3(uv.x, t, m, hvr, u_scroll) * u_intro;
+  float h2 = getCrest2(uv.x, t, m, hvr, u_scroll) * u_intro;
+  float h1 = getCrest1(uv.x, t, m, hvr, u_scroll) * u_intro;
 
   // ── 2. Block 3: Deep Background Ridge ───────────────────────
   if (uv.y < h3) {
     float d3 = h3 - uv.y;
-    float slope3 = (getCrest3(uv.x + 0.005, t, m, hvr) - getCrest3(uv.x - 0.005, t, m, hvr)) / 0.01;
+    float slope3 = (getCrest3(uv.x + 0.005, t, m, hvr, u_scroll) - getCrest3(uv.x - 0.005, t, m, hvr, u_scroll)) / 0.01;
     
     // Smooth C-infinity 3D curvature (Zero creases or seams)
     float dZdd3 = 0.32 * exp(-d3 * 2.5);
@@ -149,7 +153,7 @@ void main() {
   // ── 3. Block 2: Midground Sculpted Ribbon ───────────────────
   if (uv.y < h2) {
     float d2 = h2 - uv.y;
-    float slope2 = (getCrest2(uv.x + 0.005, t, m, hvr) - getCrest2(uv.x - 0.005, t, m, hvr)) / 0.01;
+    float slope2 = (getCrest2(uv.x + 0.005, t, m, hvr, u_scroll) - getCrest2(uv.x - 0.005, t, m, hvr, u_scroll)) / 0.01;
 
     // Smooth C-infinity 3D volumetric curvature (Zero creases, soft diffused surface)
     float dZdd2 = 0.38 * exp(-d2 * 2.6) - 0.05;
@@ -184,11 +188,17 @@ void main() {
 
     float bodyBlend2 = exp(-d2 * 2.4);
     vec3 b2Body = mix(vec3(0.008, 0.012, 0.022), vec3(0.038, 0.078, 0.115), bodyBlend2);
-    col = b2Body * diff2
+    vec3 b2Col = b2Body * diff2
         + (spec2 + specMouse2) * vec3(0.40, 0.92, 0.80)
         + vec3(0.20, 0.85, 0.95) * streak2
         + sss2Col * (sss2 + sssGlow2 + softBodyGlow2)
         + vec3(0.15, 0.80, 0.90) * fresnel2;
+
+    // Organic lower drape for Block 2 when rising on scroll
+    float lowerProtrusion2 = (cos(uv.x * 4.2 - t * 0.25) * 0.04) * u_scroll;
+    float maxDepth2 = mix(1.2, 0.38 + lowerProtrusion2, u_scroll);
+    float bodyMask2 = smoothstep(maxDepth2, maxDepth2 * 0.50, d2);
+    col = mix(bgBase, b2Col, bodyMask2);
   }
 
   // Soft atmospheric shadow from Block 1 onto Block 2
@@ -200,7 +210,7 @@ void main() {
   // ── 4. Block 1: Foreground Majestic Silk Dune (Volumetric 3D) ─
   if (uv.y < h1) {
     float d1 = h1 - uv.y;
-    float slope1 = (getCrest1(uv.x + 0.005, t, m, hvr) - getCrest1(uv.x - 0.005, t, m, hvr)) / 0.01;
+    float slope1 = (getCrest1(uv.x + 0.005, t, m, hvr, u_scroll) - getCrest1(uv.x - 0.005, t, m, hvr, u_scroll)) / 0.01;
 
     // Pure C-infinity Volumetric Surface (Zero Creases, Continuous Normal Gradient)
     float dZdd1 = 0.42 * exp(-d1 * 2.6) - 0.06;
@@ -257,7 +267,17 @@ void main() {
                    + fresnelCol * fresnel1
                    + crestEdgeCol * crestEdge;
 
-    col = block1Col;
+    // Organic lower drape and protrusions for Block 1 (Nhô ra một chút khi trôi lên)
+    float lowerProtrusion1 = (sin(uv.x * 3.8 + t * 0.22) * 0.055 + cos(uv.x * 2.4 - t * 0.18) * 0.038) * u_scroll;
+    float maxDepth1 = mix(1.2, 0.36 + lowerProtrusion1, u_scroll);
+    float bodyMask1 = smoothstep(maxDepth1, maxDepth1 * 0.45, d1);
+
+    // Glowing lower rim highlight along the protruding fold
+    float lowerRim1 = exp(-pow((d1 - maxDepth1 * 0.75) * 14.0, 2.0)) * 0.45 * u_scroll;
+    vec3 lowerRimCol1 = mix(vec3(0.68, 0.98, 0.25), vec3(0.15, 0.85, 0.95), uv.x);
+    block1Col += lowerRimCol1 * lowerRim1;
+
+    col = mix(bgBase, block1Col, bodyMask1);
   }
 
   // ── 5. Atmospheric Rim Bloom Above Block 1 ──────────────────
@@ -268,10 +288,13 @@ void main() {
     col += bloomCol * skyBloom + sweepCol * skyBloom * 1.2;
   }
 
-  // ── 6. Bottom Seamless Velvet Fade (No Straight Cutoff Line) ──
-  // Dissolves the wave body and glow organically into pure deep midnight
-  float bottomFade = smoothstep(0.01, 0.30, uv.y);
-  col = mix(bgBase, col, bottomFade);
+  // ── 6. Scroll-Driven Top Canopy Radiance (Ánh sáng trải dài từ trần 3D xuống) ──
+  // Khi cuộn xuống trang dưới, khối 3D ở phía trên tỏa ánh sáng mềm rủ nhẹ xuống
+  if (u_scroll > 0.02) {
+    float topAura = exp(-max(0.0, (1.0 - uv.y) * 4.2)) * u_scroll;
+    vec3 canopyCol = mix(vec3(0.68, 0.98, 0.25), vec3(0.15, 0.85, 0.95), uv.x);
+    col += canopyCol * topAura * 0.35;
+  }
 
   gl_FragColor = vec4(col, 1.0);
 }

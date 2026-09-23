@@ -72,3 +72,21 @@ export interface GlassCardData {
 export interface GlassCardsProps {
   readonly cards: ReadonlyArray<GlassCardData>;
 }
+
+/** A single stage in the investment pipeline */
+export interface PipelineStage {
+  readonly id: string;
+  readonly stageNumber: string;
+  readonly title: string;
+  readonly shortTitle: string;
+  readonly description: string;
+  readonly input: string;
+  readonly engine: string;
+  readonly output: string;
+  readonly icon: string;
+}
+
+/** Props for the PipelineTimeline component */
+export interface PipelineTimelineProps {
+  readonly stages: ReadonlyArray<PipelineStage>;
+}

@@ -1,0 +1,505 @@
+/* ══════════════════════════════════════════════════════════
+   Pipeline Timeline — Sticky Horizontal Station Road
+   Seamlessly connected to the 3D WebGL wave & bottom glow
+   ══════════════════════════════════════════════════════════ */
+
+.pipeline-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  background: transparent;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.pipeline-scroll-container {
+  position: relative;
+  width: 100%;
+  height: 270vh;
+  background: transparent;
+}
+
+/* ── Sticky Viewport ─────────────────────────────────────── */
+
+.pipeline-sticky-viewport {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem 0 2.5rem;
+  z-index: 2;
+}
+
+/* ── Energy Conduit Beam (Direct 3D Light Connection) ────── */
+
+.pipeline-conduit-wrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.pipeline-conduit-glow {
+  position: absolute;
+  top: -20px;
+  width: 120px;
+  height: 40px;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(var(--color-accent-lime-rgb), 0.45) 0%,
+    transparent 70%
+  );
+  filter: blur(10px);
+}
+
+.pipeline-conduit-beam {
+  width: 2px;
+  height: 48px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-accent-lime) 0%,
+    var(--color-accent-teal) 70%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px var(--color-accent-lime);
+}
+
+.pipeline-conduit-pulse {
+  position: absolute;
+  top: 0;
+  width: 6px;
+  height: 14px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 14px #fff, 0 0 25px var(--color-accent-lime);
+  animation: conduitPulse 2s ease-in-out infinite;
+}
+
+@keyframes conduitPulse {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(46px);
+    opacity: 0;
+  }
+}
+
+.pipeline-conduit-core {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent-lime);
+  box-shadow: 0 0 16px var(--color-accent-lime), 0 0 30px var(--color-accent-teal);
+  margin-top: -2px;
+}
+
+/* ── Section Header ─────────────────────────────────────── */
+
+.pipeline-header {
+  text-align: center;
+  padding: 0 2rem;
+  z-index: 4;
+  margin-top: 1.2rem;
+}
+
+.pipeline-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--color-accent-lime);
+  background: rgba(var(--color-accent-lime-rgb), 0.08);
+  border: 1px solid rgba(var(--color-accent-lime-rgb), 0.25);
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 0.9rem;
+  box-shadow: 0 0 20px -5px rgba(var(--color-accent-lime-rgb), 0.25);
+}
+
+.pipeline-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent-lime);
+  box-shadow: 0 0 8px var(--color-accent-lime);
+  animation: pulseDot 1.8s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.pipeline-title {
+  font-family: var(--font-sans);
+  font-size: clamp(2rem, 3.8vw, 3rem);
+  font-weight: 700;
+  color: var(--text-white);
+  line-height: 1.15;
+  margin: 0 0 0.65rem;
+  letter-spacing: -0.01em;
+}
+
+.pipeline-title-accent {
+  background: linear-gradient(135deg, #bef264 0%, var(--color-accent-lime) 50%, var(--color-accent-teal) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(var(--color-accent-lime-rgb), 0.35));
+}
+
+.pipeline-subtitle {
+  font-family: var(--font-sans);
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+  color: var(--text-secondary);
+  max-width: 640px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── Horizontal Track & Stations ────────────────────────── */
+
+.pipeline-track-wrapper {
+  width: 100%;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  padding: 1rem 0;
+  z-index: 4;
+}
+
+.pipeline-horizontal-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding-left: max(6vw, calc(50vw - 180px));
+  padding-right: 25vw;
+  will-change: transform;
+}
+
+.pipeline-station-group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pipeline-station {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 350px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Station Node */
+
+.pipeline-station-node {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.9rem;
+}
+
+.pipeline-node-core {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: all 0.35s ease;
+}
+
+.pipeline-node-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  transition: all 0.35s ease;
+}
+
+.pipeline-station-active .pipeline-node-core {
+  background: var(--color-accent-lime);
+  box-shadow: 0 0 12px var(--color-accent-lime), 0 0 25px var(--color-accent-lime);
+}
+
+.pipeline-station-active .pipeline-node-ring {
+  border-color: rgba(var(--color-accent-lime-rgb), 0.6);
+  transform: scale(1.3);
+  box-shadow: 0 0 15px rgba(var(--color-accent-lime-rgb), 0.3);
+}
+
+/* Stage Badge */
+
+.pipeline-stage-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1.1rem;
+  transition: all 0.35s ease;
+}
+
+.pipeline-badge-sep {
+  color: var(--color-accent-lime);
+  opacity: 0.7;
+}
+
+.pipeline-station-active .pipeline-stage-badge {
+  color: var(--text-white);
+  background: rgba(var(--color-accent-lime-rgb), 0.12);
+  border-color: rgba(var(--color-accent-lime-rgb), 0.45);
+  box-shadow: 0 0 16px -4px rgba(var(--color-accent-lime-rgb), 0.35);
+}
+
+/* ── Holographic Station Card ───────────────────────────── */
+
+.pipeline-card {
+  position: relative;
+  width: 100%;
+  background: rgba(13, 10, 36, 0.75);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pipeline-card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-accent-lime), transparent);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.pipeline-station-active .pipeline-card {
+  border-color: rgba(var(--color-accent-lime-rgb), 0.45);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    0 24px 60px -12px rgba(0, 0, 0, 0.7),
+    0 0 40px -10px rgba(var(--color-accent-lime-rgb), 0.25);
+}
+
+.pipeline-station-active .pipeline-card-glow {
+  opacity: 1;
+}
+
+.pipeline-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.85rem;
+}
+
+.pipeline-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  font-size: 1.15rem;
+  transition: all 0.35s ease;
+}
+
+.pipeline-station-active .pipeline-card-icon {
+  background: rgba(var(--color-accent-lime-rgb), 0.15);
+  border-color: rgba(var(--color-accent-lime-rgb), 0.4);
+  box-shadow: 0 0 15px rgba(var(--color-accent-lime-rgb), 0.25);
+}
+
+.pipeline-card-title {
+  font-family: var(--font-sans);
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--text-white);
+  line-height: 1.25;
+  margin: 0;
+}
+
+.pipeline-card-desc {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0 0 1.25rem;
+}
+
+/* Flow Rows (Input, Engine, Output) */
+
+.pipeline-flow-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1rem;
+}
+
+.pipeline-flow-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.035);
+}
+
+.pipeline-flow-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.pipeline-flow-val {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pipeline-flow-accent {
+  color: var(--color-accent-lime);
+  font-weight: 600;
+}
+
+/* ── Optical Fiber Rail & Photon Particle ───────────────── */
+
+.pipeline-connector-rail {
+  position: relative;
+  width: 90px;
+  height: 2px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pipeline-rail-track {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--color-accent-lime-rgb), 0.3) 0%,
+    rgba(20, 184, 166, 0.3) 100%
+  );
+  box-shadow: 0 0 8px rgba(var(--color-accent-lime-rgb), 0.2);
+}
+
+.pipeline-photon-particle {
+  position: absolute;
+  left: 0;
+  width: 14px;
+  height: 4px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 10px #fff, 0 0 18px var(--color-accent-lime);
+  animation: photonFlow 2.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+@keyframes photonFlow {
+  0% {
+    left: 0;
+    opacity: 0;
+    transform: scaleX(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  80% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+    transform: scaleX(0.5);
+  }
+}
+
+/* ── Bottom Progress Indicator ──────────────────────────── */
+
+.pipeline-progress-rail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  z-index: 4;
+}
+
+.pipeline-progress-pip {
+  width: 28px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  transition: all 0.35s ease;
+}
+
+.pipeline-progress-pip.pip-active {
+  width: 52px;
+  background: var(--color-accent-lime);
+  box-shadow: 0 0 12px var(--color-accent-lime);
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .pipeline-station {
+    width: 300px;
+  }
+
+  .pipeline-card {
+    padding: 1.35rem;
+  }
+
+  .pipeline-connector-rail {
+    width: 50px;
+  }
+}
