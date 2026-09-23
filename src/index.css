@@ -1,8 +1,68 @@
 /* ══════════════════════════════════════════════════════════
-   Global Styles — Purple Aurora Financial Theme
+   Global Styles & Design Tokens — Meridian Financial Theme
+   Strictly adheres to react-architect Golden Rules:
+   - Root CSS Custom Properties
+   - No hardcoded colors in component stylesheets
+   - Accessible contrast & smooth animations
    ══════════════════════════════════════════════════════════ */
 
 @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;450;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
+:root {
+  /* Background Color Palette */
+  --bg-primary: #08071b;
+  --bg-obsidian: #070a12;
+  --bg-card: rgba(13, 10, 36, 0.72);
+  --bg-card-gradient-start: rgba(14, 38, 64, 0.42);
+  --bg-card-gradient-mid: rgba(13, 10, 36, 0.52);
+  --bg-card-gradient-end: rgba(42, 18, 60, 0.42);
+  --bg-glass-pill: rgba(255, 255, 255, 0.035);
+  --bg-glass-pill-hover: rgba(163, 230, 53, 0.05);
+
+  /* Brand Accents */
+  --color-accent-lime: #a3e635;
+  --color-accent-lime-rgb: 163, 230, 53;
+  --color-accent-purple: #8b5cf6;
+  --color-accent-purple-rgb: 139, 92, 246;
+  --color-accent-teal: #14b8a6;
+  --color-accent-cyan: #06b6d4;
+
+  /* Market Status Colors */
+  --color-positive: #34d399;
+  --color-negative: #f87171;
+  --color-positive-rgb: 52, 211, 153;
+  --color-negative-rgb: 248, 113, 113;
+
+  /* Text & Typography Colors */
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.70);
+  --text-muted: rgba(255, 255, 255, 0.40);
+  --text-dim: rgba(255, 255, 255, 0.25);
+  --text-white: rgb(247, 243, 243);
+
+  /* Borders & Outlines */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glass: rgba(255, 255, 255, 0.065);
+  --border-card-hover: rgba(139, 92, 246, 0.22);
+  --border-lime-subtle: rgba(163, 230, 53, 0.35);
+  --border-focus: rgba(139, 92, 246, 0.60);
+
+  /* Shadows & Glows */
+  --shadow-card: 0 8px 30px -4px rgba(0, 0, 0, 0.45);
+  --shadow-lime-glow: 0 0 10px rgba(163, 230, 53, 0.85);
+  --shadow-lime-soft: 0 0 8px #a3e635;
+  --shadow-text-white: 0 0 18px rgba(255, 255, 255, 0.20);
+  --shadow-text-glow: 0 0 22px rgba(163, 230, 53, 0.35);
+
+  /* Glassmorphism Blurs */
+  --blur-glass: 20px;
+  --blur-pill: 12px;
+
+  /* Typography Font Stacks */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-serif: "DM Serif Display", serif;
+}
 
 *,
 *::before,
@@ -20,10 +80,9 @@ html {
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, sans-serif;
-  background: #08071b;
-  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
   line-height: 1.5;
@@ -40,29 +99,29 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(8, 7, 27, 0.9);
+  background: var(--bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.15);
+  background: rgba(var(--color-accent-purple-rgb), 0.15);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.3);
+  background: rgba(var(--color-accent-purple-rgb), 0.30);
 }
 
 /* ── Selection ───────────────────────────────────────────── */
 
 ::selection {
-  background: rgba(139, 92, 246, 0.25);
-  color: #fff;
+  background: rgba(var(--color-accent-purple-rgb), 0.25);
+  color: var(--text-white);
 }
 
 /* ── Focus ───────────────────────────────────────────────── */
 
 :focus-visible {
-  outline: 2px solid rgba(139, 92, 246, 0.6);
+  outline: 2px solid var(--border-focus);
   outline-offset: 2px;
 }
 

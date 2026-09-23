@@ -1,4 +1,4 @@
-import { HeroSection } from "./components/HeroSection";
+import { HeroSection } from "./features/landing";
 
 export default function App() {
   return (

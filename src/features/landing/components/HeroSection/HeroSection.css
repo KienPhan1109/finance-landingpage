@@ -1,0 +1,264 @@
+/* ══════════════════════════════════════════════════════════
+   Hero Section — Vanilla CSS Standard
+   ══════════════════════════════════════════════════════════ */
+
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--bg-obsidian);
+}
+
+/* ── Noise Texture Overlay ───────────────────────────────── */
+
+.hero-noise-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 0.02;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* ── Content Container ───────────────────────────────────── */
+
+.hero-content-container {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 1500px;
+  padding: 0 2rem;
+  margin-top: -3.5rem;
+  margin-bottom: 2rem;
+  animation: contentFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Top Announcement Pill ───────────────────────────────── */
+
+.hero-announcement-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0.95rem 0.35rem 0.45rem;
+  border-radius: 100px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-glass-pill);
+  backdrop-filter: blur(var(--blur-pill));
+  -webkit-backdrop-filter: blur(var(--blur-pill));
+  margin-bottom: 1.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.hero-announcement-pill:hover {
+  border-color: var(--border-lime-subtle);
+  background: var(--bg-glass-pill-hover);
+  transform: translateY(-1px);
+}
+
+.hero-pill-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  background: rgba(var(--color-accent-lime-rgb), 0.16);
+  color: var(--color-accent-lime);
+  border: 1px solid var(--border-lime-subtle);
+}
+
+.hero-pill-text {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.hero-pill-arrow {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  transition: transform 0.25s ease;
+}
+
+.hero-announcement-pill:hover .hero-pill-arrow {
+  transform: translateX(2px);
+  color: var(--color-accent-lime);
+}
+
+/* ── Headline ────────────────────────────────────────────── */
+
+.hero-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0 0 1.6rem;
+  line-height: 1.10;
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+  letter-spacing: 0.3rem;
+}
+
+.hero-headline-top,
+.hero-headline-bottom {
+  font-family: var(--font-sans);
+  font-size: clamp(3.5rem, 7.5vw, 6.25rem);
+  font-weight: 700;
+  color: var(--text-white);
+}
+
+.hero-headline-accent {
+  background: linear-gradient(135deg, #bef264 0%, var(--color-accent-lime) 50%, #4ade80 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 25px rgba(var(--color-accent-lime-rgb), 0.4));
+}
+
+/* ── Subheadline ─────────────────────────────────────────── */
+
+.hero-subheadline {
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1.6vw, 1.12rem);
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 0 2.4rem;
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
+/* ── Action Buttons Row ──────────────────────────────────── */
+
+.hero-cta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
+}
+
+.hero-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.85rem;
+  border-radius: 100px;
+  background: var(--color-accent-lime);
+  color: var(--bg-obsidian);
+  font-family: var(--font-sans);
+  font-size: 0.94rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px -4px rgba(var(--color-accent-lime-rgb), 0.35);
+  transition: all 0.25s ease;
+}
+
+.hero-cta-primary:hover {
+  background: #bef264;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -4px rgba(var(--color-accent-lime-rgb), 0.5);
+}
+
+.hero-cta-primary:active {
+  transform: translateY(0);
+}
+
+.hero-btn-arrow {
+  transition: transform 0.25s ease;
+}
+
+.hero-cta-primary:hover .hero-btn-arrow {
+  transform: translateX(3px);
+}
+
+.hero-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.85rem;
+  border-radius: 100px;
+  background: var(--bg-glass-pill);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.94rem;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(var(--blur-pill));
+  -webkit-backdrop-filter: blur(var(--blur-pill));
+  transition: all 0.25s ease;
+}
+
+.hero-cta-secondary:hover {
+  background: var(--border-subtle);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.hero-cta-secondary:active {
+  transform: translateY(0);
+}
+
+/* ── Seamless Bottom Obsidian Fade ──────────────────────── */
+
+.hero-bottom-fade-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  pointer-events: none;
+  z-index: 4;
+  background: linear-gradient(
+    to bottom,
+    rgba(7, 10, 18, 0) 0%,
+    rgba(7, 10, 18, 0.35) 40%,
+    rgba(7, 10, 18, 0.75) 70%,
+    var(--bg-obsidian) 100%
+  );
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .hero-content-container {
+    padding: 0 1.25rem;
+    margin-top: 1rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .hero-cta-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+
+  .hero-cta-primary,
+  .hero-cta-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}

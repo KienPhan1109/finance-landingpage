@@ -1,0 +1,69 @@
+/* ══════════════════════════════════════════════════════════
+   ErrorBoundary — Vanilla CSS Standard
+   ══════════════════════════════════════════════════════════ */
+
+.error-boundary-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+}
+
+.error-boundary-content {
+  text-align: center;
+  max-width: 400px;
+  padding: 3rem 2rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  background: rgba(var(--color-accent-purple-rgb), 0.03);
+}
+
+.error-boundary-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  filter: grayscale(0.3);
+}
+
+.error-boundary-title {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.error-boundary-message {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.error-boundary-details {
+  text-align: left;
+  border-top: 1px solid var(--border-glass);
+  padding-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.error-boundary-details summary {
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.error-boundary-details code {
+  display: block;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  word-break: break-all;
+  font-family: var(--font-mono);
+  color: var(--color-accent-lime);
+}

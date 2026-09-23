@@ -1,0 +1,122 @@
+import type { DualChartData, GlassCardData, NavItem, TickerItem } from "../types";
+
+export const NAV_ITEMS: ReadonlyArray<NavItem> = [
+  { label: "Strategies", href: "#strategies", isActive: true },
+  { label: "Research", href: "#research", isActive: false },
+  { label: "Performance", href: "#performance", isActive: false },
+  { label: "About", href: "#about", isActive: false },
+];
+
+export const GLASS_CARDS_DATA: ReadonlyArray<GlassCardData> = [
+  {
+    id: "risk-metrics",
+    title: "Risk Metrics",
+    value: "$2,847.60",
+    subtitle: "Value at Risk (95%)",
+    position: "left-top",
+  },
+  {
+    id: "saving-budget",
+    title: "Monthly Alpha",
+    value: "+3.42%",
+    subtitle: "vs. Benchmark",
+    position: "left-bottom",
+  },
+  {
+    id: "portfolio-nav",
+    title: "Portfolio NAV",
+    value: "$5,237.34",
+    subtitle: "",
+    position: "center",
+    items: [
+      { label: "Long Positions", value: "$3,452.18", accent: "positive" },
+      { label: "Short Positions", value: "$1,785.16", accent: "negative" },
+    ],
+  },
+  {
+    id: "strategies",
+    title: "Strategies",
+    value: "",
+    position: "right-top",
+    items: [
+      { label: "Stat Arb", value: "$2.1B" },
+      { label: "Momentum", value: "$1.8B" },
+      { label: "Mean Rev.", value: "$0.9B" },
+    ],
+  },
+  {
+    id: "goals",
+    title: "Fund Targets",
+    value: "",
+    position: "right-bottom",
+    items: [
+      { label: "Sharpe Ratio", value: "2.14" },
+      { label: "Max Drawdown", value: "-4.2%" },
+    ],
+  },
+];
+
+export const DUAL_CHART_DATA: DualChartData = {
+  bars: [
+    { label: "Jan '24", value: 340 },
+    { label: "Feb '24", value: 260 },
+    { label: "Mar '24", value: 430 },
+    { label: "Apr '24", value: 370 },
+    { label: "May '24", value: 540 },
+    { label: "Jun '24", value: 390 },
+    { label: "Jul '24", value: 490 },
+    { label: "Aug '24", value: 640 },
+    { label: "Sep '24", value: 450 },
+    { label: "Oct '24", value: 560 },
+    { label: "Nov '24", value: 720 },
+    { label: "Dec '24", value: 590 },
+    { label: "Jan '25", value: 670 },
+    { label: "Feb '25", value: 830 },
+    { label: "Mar '25", value: 610 },
+    { label: "Apr '25", value: 760 },
+    { label: "May '25", value: 700 },
+    { label: "Jun '25", value: 900 },
+  ],
+  line: [
+    { label: "Jan '24", value: 2200 },
+    { label: "Feb '24", value: 2380 },
+    { label: "Mar '24", value: 2290 },
+    { label: "Apr '24", value: 2580 },
+    { label: "May '24", value: 2880 },
+    { label: "Jun '24", value: 2760 },
+    { label: "Jul '24", value: 3120 },
+    { label: "Aug '24", value: 3480 },
+    { label: "Sep '24", value: 3320 },
+    { label: "Oct '24", value: 3720 },
+    { label: "Nov '24", value: 4180 },
+    { label: "Dec '24", value: 4020 },
+    { label: "Jan '25", value: 4420 },
+    { label: "Feb '25", value: 4780 },
+    { label: "Mar '25", value: 4620 },
+    { label: "Apr '25", value: 4980 },
+    { label: "May '25", value: 5180 },
+    { label: "Jun '25", value: 5450 },
+  ],
+  barMaxValue: 950,
+  lineMinValue: 2000,
+  lineMaxValue: 5600,
+};
+
+export const TICKER_ITEMS: ReadonlyArray<TickerItem> = [
+  { id: "aapl", symbol: "AAPL", companyName: "Apple Inc.", price: 234.82, changePercent: 1.47, direction: "up" },
+  { id: "msft", symbol: "MSFT", companyName: "Microsoft Corp.", price: 467.56, changePercent: 0.93, direction: "up" },
+  { id: "googl", symbol: "GOOGL", companyName: "Alphabet Inc.", price: 178.34, changePercent: -0.62, direction: "down" },
+  { id: "amzn", symbol: "AMZN", companyName: "Amazon.com Inc.", price: 198.67, changePercent: 2.15, direction: "up" },
+  { id: "nvda", symbol: "NVDA", companyName: "NVIDIA Corp.", price: 142.89, changePercent: 3.82, direction: "up" },
+  { id: "meta", symbol: "META", companyName: "Meta Platforms", price: 589.21, changePercent: -1.24, direction: "down" },
+  { id: "tsla", symbol: "TSLA", companyName: "Tesla Inc.", price: 267.43, changePercent: -2.37, direction: "down" },
+  { id: "brka", symbol: "BRK.A", companyName: "Berkshire Hathaway", price: 687250.00, changePercent: 0.18, direction: "up" },
+  { id: "jpm", symbol: "JPM", companyName: "JPMorgan Chase", price: 245.78, changePercent: 1.05, direction: "up" },
+  { id: "v", symbol: "V", companyName: "Visa Inc.", price: 312.45, changePercent: 0.72, direction: "up" },
+  { id: "jnj", symbol: "JNJ", companyName: "Johnson & Johnson", price: 156.89, changePercent: -0.34, direction: "down" },
+  { id: "wmt", symbol: "WMT", companyName: "Walmart Inc.", price: 178.92, changePercent: 1.28, direction: "up" },
+  { id: "pg", symbol: "PG", companyName: "Procter & Gamble", price: 167.34, changePercent: 0.56, direction: "up" },
+  { id: "ma", symbol: "MA", companyName: "Mastercard Inc.", price: 478.90, changePercent: -0.89, direction: "down" },
+  { id: "hd", symbol: "HD", companyName: "Home Depot", price: 389.12, changePercent: 1.67, direction: "up" },
+  { id: "crm", symbol: "CRM", companyName: "Salesforce Inc.", price: 312.78, changePercent: 2.34, direction: "up" },
+];
