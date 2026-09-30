@@ -23,27 +23,6 @@
   width: 100%;
 }
 
-@supports (animation-timeline: scroll()) {
-  @keyframes heroContentParallaxExit {
-    0% {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(-45px) scale(0.96);
-      pointer-events: none;
-    }
-  }
-
-  .hero-content-scroll-wrap {
-    animation: heroContentParallaxExit linear both;
-    animation-timeline: scroll(root block);
-    animation-range: 0px 420px;
-    will-change: transform, opacity;
-  }
-}
-
 .hero-content-container {
   position: relative;
   z-index: 5;

@@ -73,20 +73,15 @@ export interface GlassCardsProps {
   readonly cards: ReadonlyArray<GlassCardData>;
 }
 
-/** A single stage in the investment pipeline */
-export interface PipelineStage {
+/** A single process stage along the 3D flow path */
+export interface ProcessStage {
   readonly id: string;
-  readonly stageNumber: string;
+  readonly step: string;
   readonly title: string;
-  readonly shortTitle: string;
-  readonly description: string;
-  readonly input: string;
-  readonly engine: string;
-  readonly output: string;
-  readonly icon: string;
 }
 
-/** Props for the PipelineTimeline component */
-export interface PipelineTimelineProps {
-  readonly stages: ReadonlyArray<PipelineStage>;
+/** Props for the ProcessFlow component */
+export interface ProcessFlowProps {
+  readonly stages: ReadonlyArray<ProcessStage>;
 }
+

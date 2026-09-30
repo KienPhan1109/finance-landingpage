@@ -5,4 +5,4 @@ export * from "./components/Navbar";
 export * from "./components/ChartBackground";
 export * from "./components/TickerMarquee";
 export * from "./components/GlassCards";
-export * from "./components/PipelineTimeline";
+export * from "./components/ProcessFlow";

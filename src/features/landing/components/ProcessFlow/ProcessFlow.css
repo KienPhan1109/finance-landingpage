@@ -1,0 +1,320 @@
+/* ══════════════════════════════════════════════════════════
+   ProcessFlow — 5 Equal Horizontal 3D Jelly Spheres
+   Color Spectrum matching Background Wave, Volumetric Blur,
+   Interactive Mouse Warping (Méo tại chỗ di chuột) & Local Brightening
+   ══════════════════════════════════════════════════════════ */
+
+.process-flow-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding: 10rem 2rem 8rem;
+  margin-top: 3rem;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* ── Section Header (Generous headroom from top) ────────── */
+
+.process-flow-header {
+  text-align: center;
+  max-width: 800px;
+  margin-bottom: 5rem;
+  z-index: 5;
+}
+
+.process-flow-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(var(--color-accent-lime-rgb), 0.08);
+  border: 1px solid var(--border-lime-subtle);
+  color: var(--color-accent-lime);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 1.1rem;
+  box-shadow: 0 0 20px -4px rgba(var(--color-accent-lime-rgb), 0.3);
+}
+
+.process-flow-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent-lime);
+  box-shadow: 0 0 8px var(--color-accent-lime);
+  animation: pulseDot 1.8s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+.process-flow-headline {
+  font-family: var(--font-sans);
+  font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+  font-weight: 700;
+  color: var(--text-white);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.process-flow-headline-accent {
+  background: linear-gradient(135deg, #bef264 0%, var(--color-accent-lime) 50%, var(--color-accent-teal) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 25px rgba(var(--color-accent-lime-rgb), 0.35));
+}
+
+/* ── 5 Equal Horizontal Orbs Container ──────────────────── */
+
+.process-orbs-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1720px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+/* ── Individual Jelly Sphere Card ───────────────────────── */
+
+.jelly-sphere-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  cursor: default;
+}
+
+.jelly-sphere-card:hover {
+  /* Keep container position rock-solid to eliminate any mouse coordinate jitter */
+}
+
+/* ── Volumetric Blur Aura (Độ nhòe phát sáng đồng bộ) ────── */
+
+.jelly-sphere-aura {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 285px;
+  height: 285px;
+  border-radius: 50%;
+  filter: blur(55px);
+  opacity: 0.38;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 1;
+}
+
+.jelly-sphere-card:hover .jelly-sphere-aura {
+  opacity: 0.58;
+}
+
+/* ── Interactive Liquid Canvas ──────────────────────────── */
+
+.jelly-sphere-canvas {
+  position: relative;
+  display: block;
+  width: 325px;
+  height: 325px;
+  cursor: default;
+  z-index: 2;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  filter: none;
+}
+
+.jelly-sphere-card:hover .jelly-sphere-canvas {
+  filter: none;
+}
+
+/* ── Centered Typography Overlay ────────────────────────── */
+
+.jelly-sphere-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.95rem;
+  max-width: 220px;
+  pointer-events: none;
+  z-index: 10;
+  user-select: none;
+}
+
+.jelly-sphere-badge {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  padding: 0.30rem 0.88rem;
+  border-radius: 999px;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 14px -2px currentColor;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.jelly-sphere-card:hover .jelly-sphere-badge {
+  transform: scale(1.08);
+  box-shadow: 0 0 24px currentColor;
+}
+
+.jelly-sphere-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.06rem, 1.22vw, 1.25rem);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 20px rgba(0, 0, 0, 0.9);
+  transition: text-shadow 0.3s ease;
+}
+
+.jelly-sphere-card:hover .jelly-sphere-title {
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.85), 0 2px 12px rgba(0, 0, 0, 0.95);
+}
+
+/* ── Soft Ground Shadow Underneath ──────────────────────── */
+
+.jelly-sphere-shadow {
+  width: 78%;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.80) 0%, transparent 70%);
+  filter: blur(12px);
+  margin-top: 1.2rem;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.jelly-sphere-card:hover .jelly-sphere-shadow {
+  transform: scale(0.85);
+  opacity: 0.45;
+}
+
+/* ── Responsive Adaptations ──────────────────────────────── */
+
+@media (max-width: 1650px) {
+  .process-orbs-container {
+    gap: 1rem;
+    max-width: 1480px;
+  }
+
+  .jelly-sphere-canvas {
+    width: 285px;
+    height: 285px;
+  }
+
+  .jelly-sphere-aura {
+    width: 240px;
+    height: 240px;
+  }
+
+  .jelly-sphere-title {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 1350px) {
+  .process-orbs-container {
+    gap: 0.85rem;
+  }
+
+  .jelly-sphere-canvas {
+    width: 250px;
+    height: 250px;
+  }
+
+  .jelly-sphere-aura {
+    width: 210px;
+    height: 210px;
+  }
+
+  .jelly-sphere-content {
+    max-width: 190px;
+    gap: 0.70rem;
+  }
+
+  .jelly-sphere-title {
+    font-size: 0.96rem;
+  }
+}
+
+@media (max-width: 1100px) {
+  .process-flow-section {
+    padding: 9rem 1.5rem 6rem;
+  }
+
+  .process-orbs-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.2rem;
+    max-width: 950px;
+  }
+
+  .jelly-sphere-canvas {
+    width: 285px;
+    height: 285px;
+  }
+
+  .jelly-sphere-aura {
+    width: 240px;
+    height: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .process-flow-section {
+    padding: 8rem 1.25rem 5rem;
+  }
+
+  .process-flow-header {
+    margin-bottom: 3.5rem;
+  }
+
+  .process-orbs-container {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    max-width: 320px;
+  }
+
+  .jelly-sphere-canvas {
+    width: 300px;
+    height: 300px;
+  }
+
+  .jelly-sphere-aura {
+    width: 250px;
+    height: 250px;
+  }
+}

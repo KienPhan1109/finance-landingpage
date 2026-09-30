@@ -8,27 +8,9 @@
   left: 0;
   right: 0;
   z-index: 10;
-  will-change: transform, opacity;
-}
-
-@supports (animation-timeline: scroll()) {
-  @keyframes tickerScrollFlyUp {
-    0% {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(-48px) scale(0.97);
-      pointer-events: none;
-    }
-  }
-
-  .ticker-scroll-wrapper {
-    animation: tickerScrollFlyUp linear both;
-    animation-timeline: scroll(root block);
-    animation-range: 0px 420px;
-  }
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
 }
 
 .ticker-container {
@@ -64,18 +46,21 @@
   will-change: transform, opacity;
 }
 
-.ticker-container:hover .ticker-track {
-  animation-play-state: paused;
-}
-
 .ticker-track {
   display: flex;
   align-items: center;
   white-space: nowrap;
   gap: 0;
   width: max-content;
-  animation: tickerScroll 65s linear infinite;
+  animation: tickerScroll 36s linear infinite;
   will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation-duration: 50s !important;
+    animation-iteration-count: infinite !important;
+  }
 }
 
 .ticker-item {

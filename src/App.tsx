@@ -1,8 +1,8 @@
 import {
   ChartBackground,
   HeroSection,
-  PipelineTimeline,
-  PIPELINE_STAGES,
+  ProcessFlow,
+  PROCESS_STAGES,
   DUAL_CHART_DATA,
 } from "./features/landing";
 import { ErrorBoundary, useSmoothScroll } from "./shared";
@@ -17,7 +17,7 @@ export default function App() {
         <ChartBackground data={DUAL_CHART_DATA} />
       </ErrorBoundary>
       <HeroSection />
-      <PipelineTimeline stages={PIPELINE_STAGES} />
+      <ProcessFlow stages={PROCESS_STAGES} />
     </main>
   );
 }
