@@ -406,8 +406,7 @@ export function JellySphere({ config, step, title, stageIndex }: JellySphereProp
         <span
           className="jelly-sphere-badge"
           style={{
-            color: config.badgeColor,
-            background: "rgba(0, 0, 0, 0.45)",
+            color: config.badgeColor
           }}
         >
           STAGE {step}

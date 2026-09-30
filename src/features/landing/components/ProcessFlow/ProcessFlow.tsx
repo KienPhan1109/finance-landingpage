@@ -58,56 +58,121 @@ const ORB_CONFIGS: ReadonlyArray<OrbColorConfig> = [
 ];
 
 export function ProcessFlow({ stages }: ProcessFlowProps) {
+  const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Scroll reveal: observe each .jelly-sphere-card, add/remove .orb-visible
   useEffect(() => {
+    const section = sectionRef.current;
     const container = containerRef.current;
-    if (!container) return;
+    if (!section || !container) return;
 
     const cards = container.querySelectorAll<HTMLElement>(".jelly-sphere-card");
+    if (cards.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("orb-visible");
-          } else {
-            entry.target.classList.remove("orb-visible");
-          }
+    // Reveal thresholds: 5 stages distributed along scroll progress
+    // Start at progress 0.02 and finish at 0.88, leaving 0.88 - 1.00 to view all 5 spheres
+    const START_P = 0.02;
+    const END_P = 0.88;
+    const STAGE_SPAN = (END_P - START_P) / cards.length;
+
+    let rafId = 0;
+
+    const updateCards = () => {
+      const rect = section.getBoundingClientRect();
+      const totalScrollable = section.offsetHeight - window.innerHeight;
+
+      // On mobile/tablet, disable sticky scrubbing and keep all cards visible
+      const isMobile = window.innerWidth <= 1100;
+      if (isMobile || totalScrollable <= 0) {
+        cards.forEach((card) => {
+          card.style.opacity = "1";
+          card.style.filter = "none";
+          card.style.transform = "none";
+          card.style.pointerEvents = "auto";
         });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
-    );
+        return;
+      }
 
-    cards.forEach((card) => observer.observe(card));
+      // Distance scrolled into this pinned section (0 when top locks at viewport top)
+      const scrolled = -rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / totalScrollable));
 
-    return () => observer.disconnect();
-  }, []);
+      cards.forEach((card, idx) => {
+        const stageStart = START_P + idx * STAGE_SPAN;
+        const stageEnd = stageStart + STAGE_SPAN;
+
+        let rawFactor = 0;
+        if (progress <= stageStart) {
+          rawFactor = 0;
+        } else if (progress >= stageEnd) {
+          rawFactor = 1;
+        } else {
+          rawFactor = (progress - stageStart) / STAGE_SPAN;
+        }
+
+        // Smooth cubic Hermite interpolation (smoothstep) for organic feel
+        const factor = rawFactor * rawFactor * (3 - 2 * rawFactor);
+
+        const opacity = factor;
+        const blur = (1 - factor) * 18; // 18px down to 0px
+        const brightness = 1.0 + (1 - factor) * 0.5; // 1.5 down to 1.0
+        const translateY = (1 - factor) * 45; // 45px down to 0px
+        const scale = 0.92 + factor * 0.08; // 0.92 up to 1.0
+
+        card.style.opacity = opacity.toFixed(3);
+        card.style.filter = `blur(${blur.toFixed(1)}px) brightness(${brightness.toFixed(2)})`;
+        card.style.transform = `translateY(${translateY.toFixed(1)}px) scale(${scale.toFixed(3)})`;
+        card.style.pointerEvents = factor >= 0.85 ? "auto" : "none";
+      });
+    };
+
+    const onScroll = () => {
+      if (!rafId) {
+        rafId = requestAnimationFrame(() => {
+          updateCards();
+          rafId = 0;
+        });
+      }
+    };
+
+    // Initial positioning calculation
+    updateCards();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [stages]);
 
   return (
-    <section className="process-flow-section" id="process-flow" aria-label="System Workflow">
-      {/* Section Header */}
-      <header className="process-flow-header">
-        <h2 className="process-flow-headline">
-          FBSF Cash Flow <span className="process-flow-headline-accent">Optimization Fund</span>
-        </h2>
-      </header>
+    <section className="process-flow-section" id="process-flow" ref={sectionRef} aria-label="System Workflow">
+      <div className="process-flow-sticky">
+        {/* Section Header */}
+        <header className="process-flow-header">
+          <h2 className="process-flow-headline">
+            FBSF Cash Flow <span className="process-flow-headline-accent">Optimization Fund</span>
+          </h2>
+        </header>
 
-      {/* 5 Equal Horizontal 3D Distorted Spheres with Background Spectrum & Liquid Mouse Warping */}
-      <div className="process-orbs-container" ref={containerRef}>
-        {stages.map((stage, idx) => {
-          const config = ORB_CONFIGS[idx] ?? ORB_CONFIGS[0];
-          return (
-            <JellySphere
-              key={stage.id}
-              config={config}
-              step={stage.step}
-              title={stage.title}
-              stageIndex={idx}
-            />
-          );
-        })}
+        {/* 5 Equal Horizontal 3D Distorted Spheres with Background Spectrum & Liquid Mouse Warping */}
+        <div className="process-orbs-container" ref={containerRef}>
+          {stages.map((stage, idx) => {
+            const config = ORB_CONFIGS[idx] ?? ORB_CONFIGS[0];
+            return (
+              <JellySphere
+                key={stage.id}
+                config={config}
+                step={stage.step}
+                title={stage.title}
+                stageIndex={idx}
+              />
+            );
+          })}
+        </div>
       </div>
     </section>
   );

@@ -7,16 +7,22 @@
 .process-flow-section {
   position: relative;
   width: 100%;
-  min-height: 100vh;
-  padding: 6rem 2rem 8rem;
-  margin-top: 3rem;
+  height: 280vh; /* Controlled scroll track for 5 scrubbed stages */
   background: transparent;
+  z-index: 10;
+}
+
+.process-flow-sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  z-index: 10;
+  padding: 4rem 2rem 5rem;
+  overflow: visible;
 }
 
 /* ── Section Header (Generous headroom from top) ────────── */
@@ -104,21 +110,12 @@
   padding: 60px;
   margin: -50px;
 
-  /* ── Scroll Reveal: Cinematic blur-materializing hidden state ── */
+  /* ── Scroll Reveal: Initial state before scrubbing ── */
   opacity: 0;
   transform: translateY(45px) scale(0.92);
-  filter: blur(18px) brightness(1.6);
-  transition:
-    opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1) var(--orb-delay, 0ms),
-    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) var(--orb-delay, 0ms),
-    filter 1.4s cubic-bezier(0.16, 1, 0.3, 1) var(--orb-delay, 0ms);
+  filter: blur(18px) brightness(1.5);
   will-change: opacity, transform, filter;
-}
-
-.jelly-sphere-card.orb-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0px) brightness(1);
+  pointer-events: none;
 }
 
 .jelly-sphere-card:hover {
@@ -139,7 +136,7 @@
   opacity: 0.45;
   pointer-events: none;
   transition: opacity 0.4s ease, transform 0.4s ease;
-  z-index: 1;
+  z-index: 0;
   animation: auraBreath 4.5s ease-in-out infinite;
 }
 
@@ -201,9 +198,7 @@
   padding: 0.30rem 0.88rem;
   border-radius: 999px;
   border: none;
-  background: rgba(0, 0, 0, 0.45);
-  box-shadow: 0 0 14px -2px currentColor;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(50px);
   -webkit-backdrop-filter: blur(8px);
   transition: all 0.3s ease;
 }
@@ -222,7 +217,6 @@
   letter-spacing: -0.01em;
   margin: 0;
   text-wrap: balance;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 20px rgba(0, 0, 0, 0.9);
   transition: text-shadow 0.3s ease;
 }
 
@@ -230,23 +224,51 @@
   text-shadow: 0 0 18px rgba(255, 255, 255, 0.85), 0 2px 12px rgba(0, 0, 0, 0.95);
 }
 
-/* ── Soft Ground Shadow Underneath ──────────────────────── */
+/* ── Deep 3D Ground Shadow Underneath ───────────────────── */
 
 .jelly-sphere-shadow {
-  width: 78%;
-  height: 22px;
+  position: relative;
+  width: 76%;
+  max-width: 200px;
+  min-width: 190px;
+  height: 32px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.80) 0%, transparent 70%);
-  filter: blur(12px);
-  margin-top: 1.2rem;
-  transition: transform 0.35s ease, opacity 0.35s ease;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(0, 0, 0, 0.98) 0%,
+    rgba(0, 0, 0, 0.92) 28%,
+    rgba(0, 0, 0, 0.65) 55%,
+    rgba(0, 0, 0, 0.20) 75%,
+    transparent 92%
+  );
+  filter: blur(15px);
+  margin-top: 1rem;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s ease;
   pointer-events: none;
   z-index: 1;
 }
 
+.jelly-sphere-shadow::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 65%;
+  height: 55%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.85) 45%,
+    transparent 80%
+  );
+  filter: blur(4px);
+}
+
 .jelly-sphere-card:hover .jelly-sphere-shadow {
-  transform: scale(0.85);
-  opacity: 0.45;
+  transform: scale(0.92);
+  opacity: 0.85;
 }
 
 /* ── Responsive Adaptations ──────────────────────────────── */
@@ -260,11 +282,6 @@
   .jelly-sphere-canvas {
     width: 285px;
     height: 285px;
-  }
-
-  .jelly-sphere-aura {
-    width: 240px;
-    height: 240px;
   }
 
   .jelly-sphere-title {
@@ -282,11 +299,6 @@
     height: 250px;
   }
 
-  .jelly-sphere-aura {
-    width: 210px;
-    height: 210px;
-  }
-
   .jelly-sphere-content {
     max-width: 190px;
     gap: 0.70rem;
@@ -299,7 +311,21 @@
 
 @media (max-width: 1100px) {
   .process-flow-section {
-    padding: 5rem 1.5rem 6rem;
+    height: auto;
+  }
+
+  .process-flow-sticky {
+    position: relative;
+    height: auto;
+    padding: 4rem 1.5rem 5rem;
+    overflow: visible;
+  }
+
+  .jelly-sphere-card {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    pointer-events: auto !important;
   }
 
   .process-orbs-container {
@@ -311,11 +337,6 @@
   .jelly-sphere-canvas {
     width: 285px;
     height: 285px;
-  }
-
-  .jelly-sphere-aura {
-    width: 240px;
-    height: 240px;
   }
 }
 
@@ -337,10 +358,5 @@
   .jelly-sphere-canvas {
     width: 300px;
     height: 300px;
-  }
-
-  .jelly-sphere-aura {
-    width: 250px;
-    height: 250px;
   }
 }
