@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { ProcessFlowProps } from "../../types";
 import { JellySphere, type OrbColorConfig } from "./JellySphere";
 import "./ProcessFlow.css";
@@ -57,17 +58,44 @@ const ORB_CONFIGS: ReadonlyArray<OrbColorConfig> = [
 ];
 
 export function ProcessFlow({ stages }: ProcessFlowProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Scroll reveal: observe each .jelly-sphere-card, add/remove .orb-visible
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const cards = container.querySelectorAll<HTMLElement>(".jelly-sphere-card");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("orb-visible");
+          } else {
+            entry.target.classList.remove("orb-visible");
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
+    );
+
+    cards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className="process-flow-section" id="process-flow" aria-label="System Workflow">
-      {/* Section Header with generous headroom from the top edge */}
+      {/* Section Header */}
       <header className="process-flow-header">
         <h2 className="process-flow-headline">
-          Systematic <span className="process-flow-headline-accent">Execution</span>
+          FBSF Cash Flow <span className="process-flow-headline-accent">Optimization Fund</span>
         </h2>
       </header>
 
       {/* 5 Equal Horizontal 3D Distorted Spheres with Background Spectrum & Liquid Mouse Warping */}
-      <div className="process-orbs-container">
+      <div className="process-orbs-container" ref={containerRef}>
         {stages.map((stage, idx) => {
           const config = ORB_CONFIGS[idx] ?? ORB_CONFIGS[0];
           return (

@@ -384,7 +384,11 @@ export function JellySphere({ config, step, title, stageIndex }: JellySphereProp
   }, [config, stageIndex]);
 
   return (
-    <div className="jelly-sphere-card" ref={wrapperRef}>
+    <div
+      className="jelly-sphere-card"
+      ref={wrapperRef}
+      style={{ "--orb-delay": `${stageIndex * 250}ms` } as React.CSSProperties}
+    >
       {/* Outer Volumetric Blur Aura matching background atmosphere */}
       <div
         className="jelly-sphere-aura"
