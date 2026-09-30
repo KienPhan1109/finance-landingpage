@@ -28,8 +28,15 @@ export function useChartWebGL() {
     if (!canvas) return;
 
     const gl =
-      canvas.getContext("webgl") ||
-      (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
+      canvas.getContext("webgl", {
+        antialias: true,
+        alpha: false,
+        powerPreference: "high-performance",
+      }) ||
+      (canvas.getContext("experimental-webgl", {
+        antialias: true,
+        alpha: false,
+      }) as WebGLRenderingContext | null);
 
     if (!gl) {
       setRenderError(new Error("WebGL is not supported on this device."));
@@ -82,7 +89,7 @@ export function useChartWebGL() {
 
     const handleResize = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.0);
       width = Math.floor(rect.width * dpr);
       height = Math.floor(rect.height * dpr);
       canvas.width = width;

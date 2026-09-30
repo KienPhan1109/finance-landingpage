@@ -121,15 +121,28 @@ void main() {
   float sweepBeam = exp(-pow((uv.x - sweepPos) / 0.14, 2.0)) * max(0.0, 1.0 - u_intro) * 1.6;
   vec3 sweepCol = mix(vec3(0.64, 1.0, 0.30), vec3(0.15, 0.85, 1.0), uv.x) * sweepBeam * 1.4;
 
-  // Dynamic Crest Heights with Cinematic Rise and Scroll Reduction
+  // ── Dynamic Crest Heights & Subpixel Analytical Anti-Aliasing ──
+  float eps = 0.002;
+  float px = 1.0 / u_resolution.y;
+
   float h3 = getCrest3(uv.x, t, m, hvr, u_scroll) * u_intro;
+  float slope3 = (getCrest3(uv.x + eps, t, m, hvr, u_scroll) - getCrest3(uv.x - eps, t, m, hvr, u_scroll)) / (2.0 * eps);
+  float aa3 = max(px * sqrt(1.0 + slope3 * slope3) * 1.5, 0.0008);
+  float cov3 = smoothstep(-aa3, aa3, h3 - uv.y);
+
   float h2 = getCrest2(uv.x, t, m, hvr, u_scroll) * u_intro;
+  float slope2 = (getCrest2(uv.x + eps, t, m, hvr, u_scroll) - getCrest2(uv.x - eps, t, m, hvr, u_scroll)) / (2.0 * eps);
+  float aa2 = max(px * sqrt(1.0 + slope2 * slope2) * 1.5, 0.0008);
+  float cov2 = smoothstep(-aa2, aa2, h2 - uv.y);
+
   float h1 = getCrest1(uv.x, t, m, hvr, u_scroll) * u_intro;
+  float slope1 = (getCrest1(uv.x + eps, t, m, hvr, u_scroll) - getCrest1(uv.x - eps, t, m, hvr, u_scroll)) / (2.0 * eps);
+  float aa1 = max(px * sqrt(1.0 + slope1 * slope1) * 1.5, 0.0008);
+  float cov1 = smoothstep(-aa1, aa1, h1 - uv.y);
 
   // ── 2. Block 3: Deep Background Ridge ───────────────────────
-  if (uv.y < h3) {
-    float d3 = h3 - uv.y;
-    float slope3 = (getCrest3(uv.x + 0.005, t, m, hvr, u_scroll) - getCrest3(uv.x - 0.005, t, m, hvr, u_scroll)) / 0.01;
+  if (cov3 > 0.0) {
+    float d3 = max(0.0, h3 - uv.y);
     
     // Smooth C-infinity 3D curvature (Zero creases or seams)
     float dZdd3 = 0.32 * exp(-d3 * 2.5);
@@ -141,19 +154,21 @@ void main() {
     float bodyBlend3 = exp(-d3 * 2.4);
     vec3 b3Body = mix(vec3(0.008, 0.012, 0.022), vec3(0.028, 0.058, 0.090), bodyBlend3);
     float rim3 = exp(-d3 * 32.0) * 0.60;
-    col = b3Body * diff3 + vec3(0.12, 0.72, 0.82) * rim3;
+    vec3 b3Col = b3Body * diff3 + vec3(0.12, 0.72, 0.82) * rim3;
+
+    col = mix(col, b3Col, cov3);
   }
 
-  // Soft atmospheric shadow from Block 2 onto Block 3
-  if (uv.y < h3 && uv.y >= h2 && uv.y < h2 + 0.07) {
-    float shadow2 = smoothstep(h2 + 0.07, h2, uv.y) * 0.40;
+  // Soft atmospheric shadow from Block 2 onto Block 3 (smooth transition, no sharp cuts)
+  float distAbove2 = uv.y - h2;
+  if (distAbove2 > -0.01 && distAbove2 < 0.07) {
+    float shadow2 = smoothstep(0.07, 0.0, distAbove2) * (1.0 - cov2) * 0.40;
     col *= (1.0 - shadow2);
   }
 
   // ── 3. Block 2: Midground Sculpted Ribbon ───────────────────
-  if (uv.y < h2) {
-    float d2 = h2 - uv.y;
-    float slope2 = (getCrest2(uv.x + 0.005, t, m, hvr, u_scroll) - getCrest2(uv.x - 0.005, t, m, hvr, u_scroll)) / 0.01;
+  if (cov2 > 0.0) {
+    float d2 = max(0.0, h2 - uv.y);
 
     // Smooth C-infinity 3D volumetric curvature (Zero creases, soft diffused surface)
     float dZdd2 = 0.38 * exp(-d2 * 2.6) - 0.05;
@@ -198,19 +213,21 @@ void main() {
     float lowerProtrusion2 = (cos(uv.x * 4.2 - t * 0.25) * 0.04) * u_scroll;
     float maxDepth2 = mix(1.2, 0.38 + lowerProtrusion2, u_scroll);
     float bodyMask2 = smoothstep(maxDepth2, maxDepth2 * 0.50, d2);
-    col = mix(bgBase, b2Col, bodyMask2);
+    vec3 block2Final = mix(bgBase, b2Col, bodyMask2);
+
+    col = mix(col, block2Final, cov2);
   }
 
-  // Soft atmospheric shadow from Block 1 onto Block 2
-  if (uv.y < h2 && uv.y >= h1 && uv.y < h1 + 0.09) {
-    float shadow1 = smoothstep(h1 + 0.09, h1, uv.y) * 0.50;
+  // Soft atmospheric shadow from Block 1 onto Block 2 (smooth transition, no sharp cuts)
+  float distAbove1 = uv.y - h1;
+  if (distAbove1 > -0.01 && distAbove1 < 0.09) {
+    float shadow1 = smoothstep(0.09, 0.0, distAbove1) * (1.0 - cov1) * 0.50;
     col *= (1.0 - shadow1);
   }
 
   // ── 4. Block 1: Foreground Majestic Silk Dune (Volumetric 3D) ─
-  if (uv.y < h1) {
-    float d1 = h1 - uv.y;
-    float slope1 = (getCrest1(uv.x + 0.005, t, m, hvr, u_scroll) - getCrest1(uv.x - 0.005, t, m, hvr, u_scroll)) / 0.01;
+  if (cov1 > 0.0) {
+    float d1 = max(0.0, h1 - uv.y);
 
     // Pure C-infinity Volumetric Surface (Zero Creases, Continuous Normal Gradient)
     float dZdd1 = 0.42 * exp(-d1 * 2.6) - 0.06;
@@ -254,7 +271,7 @@ void main() {
     vec3 b1Body = mix(vec3(0.008, 0.012, 0.022), vec3(0.046, 0.084, 0.125), bodyBlend);
 
     // Sculpted Razor-Crest Highlight (Subtle Anti-Aliased Bevel)
-    float crestEdge = smoothstep(0.004, 0.0, d1) * 0.88;
+    float crestEdge = smoothstep(0.005, 0.0, d1) * 0.88;
     vec3 crestEdgeCol = mix(vec3(0.92, 1.0, 0.68), vec3(0.65, 0.98, 1.0), uv.x);
 
     // Composite Final Foreground Color with Multi-Layered Interactive Physics & Intro Light Sweep
@@ -277,13 +294,13 @@ void main() {
     vec3 lowerRimCol1 = mix(vec3(0.68, 0.98, 0.25), vec3(0.15, 0.85, 0.95), uv.x);
     block1Col += lowerRimCol1 * lowerRim1;
 
-    col = mix(bgBase, block1Col, bodyMask1);
+    vec3 block1Final = mix(bgBase, block1Col, bodyMask1);
+    col = mix(col, block1Final, cov1);
   }
 
-  // ── 5. Atmospheric Rim Bloom Above Block 1 ──────────────────
-  if (uv.y >= h1 && uv.y < h1 + 0.10) {
-    float distAbove = (uv.y - h1);
-    float skyBloom = exp(-distAbove * 32.0) * 0.45;
+  // ── 5. Atmospheric Rim Bloom Above Block 1 (Smooth falloff, zero step cuts) ──
+  if (distAbove1 > -0.01 && distAbove1 < 0.10) {
+    float skyBloom = exp(-max(0.0, distAbove1) * 32.0) * smoothstep(0.10, 0.0, distAbove1) * (1.0 - cov1) * 0.45;
     vec3 bloomCol = mix(vec3(0.64, 0.90, 0.21), vec3(0.13, 0.83, 0.93), uv.x);
     col += bloomCol * skyBloom + sweepCol * skyBloom * 1.2;
   }

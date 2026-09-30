@@ -67,24 +67,24 @@ void main() {
   float R = 0.435; // Enlarged radius (no outer halo taking space)
   float angle = atan(p.y, p.x);
 
-  // ── 1. Smooth Rounded Contour Bulge towards Cursor ("bo tròn") ──
+  // ── 1. Smooth Rounded Contour Bulge towards Cursor ("bo tròn mượt mà") ──
   float mouseAngle = atan(m.y, m.x);
   float mouseDist = length(m);
   
   float angleDiff = abs(angle - mouseAngle);
   if (angleDiff > 3.14159265) angleDiff = 6.2831853 - angleDiff;
   
-  float roundArc = exp(-pow(angleDiff / 0.65, 2.0));
-  float rimProximity = exp(-pow((mouseDist - R) / 0.16, 2.0)) * u_hover;
-  float smoothBulge = roundArc * rimProximity * 0.034;
+  float roundArc = exp(-pow(angleDiff / 0.75, 2.0));
+  float rimProximity = exp(-pow((mouseDist - R) / 0.22, 2.0)) * u_hover;
+  float smoothBulge = roundArc * rimProximity * 0.028;
 
   // ── 2. Smooth Non-Singular Interior Surface Displacement ──
   float dMouse = length(p - m);
-  float innerInfluence = exp(-pow(dMouse / 0.16, 2.0)) * 0.14 * u_hover;
+  float innerInfluence = exp(-pow(dMouse / 0.24, 2.0)) * 0.08 * u_hover;
   p += (p - m) * innerInfluence;
 
   // Subtle 3D Parallax shift tracking mouse smoothly
-  p -= m * 0.015 * u_hover;
+  p -= m * 0.012 * u_hover;
 
   // ── 3. Elegant Organic Curvature & Fluid Surface Ripples ──
   float organicWarp = sin(angle * 2.0 + phase + t * 1.15) * 0.017
@@ -144,16 +144,16 @@ void main() {
 
   // ── 9. DYNAMIC 3D POINT LIGHT SHEEN AT CURSOR ──
   float cursorDist = length(p - m);
-  vec3 mouseLightPos = vec3(m.x, m.y, 0.38);
-  vec3 L_m = normalize(mouseLightPos - vec3(p, z));
-  float mouseAtten = 1.0 / (1.0 + cursorDist * cursorDist * 16.0);
+  vec3 mouseLightPos = vec3(m.x, m.y, 0.42);
+  vec3 L_m = normalize(mouseLightPos - vec3(p, z * 0.75));
+  float mouseAtten = 1.0 / (1.0 + cursorDist * cursorDist * 12.0);
   vec3 H_m = normalize(L_m + vec3(0.0, 0.0, 1.0));
-  float specPower = mix(24.0, 14.0, clamp(u_mouse_vel * 2.0, 0.0, 1.0));
-  float specMouse = pow(max(dot(N, H_m), 0.0), specPower) * (0.65 + u_mouse_vel * 0.35) * u_hover * mouseAtten;
+  float specPower = mix(20.0, 14.0, clamp(u_mouse_vel * 1.5, 0.0, 1.0));
+  float specMouse = pow(max(dot(N, H_m), 0.0), specPower) * (0.60 + u_mouse_vel * 0.30) * u_hover * mouseAtten;
 
   // Local soft illumination ("đổi màu sáng hơn nhẹ" right where mouse is)
-  float localLight = exp(-cursorDist * 6.5) * u_hover;
-  vec3 localLightCol = mix(u_col_primary, u_col_light, 0.70) * localLight * 0.55;
+  float localLight = exp(-cursorDist * 4.8) * u_hover;
+  vec3 localLightCol = mix(u_col_primary, u_col_light, 0.65) * localLight * 0.50;
 
   // ── 10. Composite Final Clean 3D Volumetric Color ──
   vec3 col = bodyColor * diff1
@@ -276,15 +276,16 @@ export function JellySphere({ config, step, title, stageIndex }: JellySphereProp
     // Mouse tracking state
     const targetMouse = { x: 0.5, y: 0.5 };
     const currentMouse = { x: 0.5, y: 0.5 };
-    let lastMoveX = 0.5;
-    let lastMoveY = 0.5;
     let targetHover = 0.0;
     let currentHover = 0.0;
-    let targetVel = 0.0;
     let currentVel = 0.0;
 
-    const handleMouseEnter = () => {
+    const handleMouseEnter = (e: MouseEvent) => {
       updateRect();
+      if (cachedRect) {
+        targetMouse.x = (e.clientX - cachedRect.left) / cachedRect.width;
+        targetMouse.y = 1.0 - (e.clientY - cachedRect.top) / cachedRect.height;
+      }
       targetHover = 1.0;
     };
 
@@ -292,26 +293,20 @@ export function JellySphere({ config, step, title, stageIndex }: JellySphereProp
       if (!cachedRect) updateRect();
       if (!cachedRect) return;
 
+      // Allow natural extension beyond [0, 1] so approaching from padding is continuous and smooth
       const nx = (e.clientX - cachedRect.left) / cachedRect.width;
       const ny = 1.0 - (e.clientY - cachedRect.top) / cachedRect.height;
-      const dx = nx - lastMoveX;
-      const dy = ny - lastMoveY;
-      lastMoveX = nx;
-      lastMoveY = ny;
 
-      targetMouse.x = Math.max(0.0, Math.min(1.0, nx));
-      targetMouse.y = Math.max(0.0, Math.min(1.0, ny));
+      // Generous bounds so cursor smoothly influences the sphere even from padding
+      targetMouse.x = Math.max(-0.25, Math.min(1.25, nx));
+      targetMouse.y = Math.max(-0.25, Math.min(1.25, ny));
       targetHover = 1.0;
-
-      const speed = Math.sqrt(dx * dx + dy * dy);
-      targetVel = Math.min(speed * 12.0, 1.0);
     };
 
     const handleMouseLeave = () => {
       targetHover = 0.0;
-      targetVel = 0.0;
-      targetMouse.x = 0.5;
-      targetMouse.y = 0.5;
+      // Do NOT snap targetMouse to (0.5, 0.5) to avoid unnatural center pulling!
+      // Let currentHover smoothly decay in-place right where cursor exited
       cachedRect = null;
     };
 
@@ -334,16 +329,22 @@ export function JellySphere({ config, step, title, stageIndex }: JellySphereProp
       lastTime = now;
       const elapsed = (now - startTime) * 0.001;
 
-      // Exponential smoothing for fluid, jitter-free inertia
-      const mouseDamp = 1.0 - Math.exp(-10.0 * dt);
-      const hoverDamp = 1.0 - Math.exp(-7.0 * dt);
-      const velDamp = 1.0 - Math.exp(-10.0 * dt);
+      // Silky exponential smoothing for fluid, jitter-free mouse inertia
+      const mouseDamp = 1.0 - Math.exp(-8.0 * dt);
+      const hoverDamp = 1.0 - Math.exp(-5.5 * dt);
+
+      const prevX = currentMouse.x;
+      const prevY = currentMouse.y;
 
       currentMouse.x += (targetMouse.x - currentMouse.x) * mouseDamp;
       currentMouse.y += (targetMouse.y - currentMouse.y) * mouseDamp;
       currentHover += (targetHover - currentHover) * hoverDamp;
-      currentVel += (targetVel - currentVel) * velDamp;
-      targetVel *= Math.exp(-4.5 * dt);
+
+      // Velocity derived from smoothed positions (eliminates all mouse event polling jitter)
+      const moveDist = Math.hypot(currentMouse.x - prevX, currentMouse.y - prevY);
+      const instantVel = Math.min((moveDist / Math.max(dt, 0.001)) * 0.35, 1.0);
+      const velDamp = 1.0 - Math.exp(-6.0 * dt);
+      currentVel += (instantVel - currentVel) * velDamp;
 
       gl.useProgram(program);
       gl.clearColor(0, 0, 0, 0);

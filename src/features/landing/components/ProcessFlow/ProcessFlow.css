@@ -135,7 +135,7 @@
   filter: blur(50px);
   opacity: 0.45;
   pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   z-index: 0;
   animation: auraBreath 4.5s ease-in-out infinite;
 }
@@ -146,9 +146,8 @@
 }
 
 .jelly-sphere-card:hover .jelly-sphere-aura {
-  opacity: 0.68;
-  transform: translate(-50%, -50%) scale(1.18);
-  animation-play-state: paused;
+  opacity: 0.75;
+  transform: translate(-50%, -50%) scale(1.15);
 }
 
 /* ── Interactive Liquid Canvas ──────────────────────────── */
